@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UERJBotz • Combat Lab</title>
+  <meta name="description" content="Calculadora da UERJBotz para locomoção, tração, mordida e energia de robôs de combate." />
+  <meta name="theme-color" content="#0b0f17" />
+  <link rel="icon" href="assets/logo-uerjbotz.jpg" />
+  <!-- Estilos compilados localmente; não requer Tailwind CDN. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/tailwind.min.css" />
+  <style>
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    :root {color-scheme:dark; --lab-red:#ef263b;}
+    html {scroll-behavior:smooth;scroll-padding-top:8rem;}
+    body {background:radial-gradient(ellipse at 90% 0%,#48132033,transparent 45%),#0b0f17;}
+    header {border-top:3px solid var(--lab-red);box-shadow:0 6px 30px #0003;}
+    .brand-lockup {display:flex;align-items:center;gap:20px;padding:10px 0;}
+    .brand-wordmark {width:190px;height:auto;object-fit:contain;}
+    .brand-divider {height:36px;width:1px;background:#394253;}
+    .brand-lockup h1 {font-size:1.125rem;font-weight:800;letter-spacing:.015em;}
+    .brand-lockup p {font-size:.75rem;color:#aab7ca;}
+    main {padding-top:1.5rem!important;}
+    button,input,select {transition:border-color .15s,background-color .15s;}
+    button {min-height:40px;}
+    input:not([type=range]), select {min-height:44px;font-size:1rem!important;}
+    input[type=number] {font-variant-numeric:tabular-nums;}
+    .relative input {padding-right:5rem;}
+    .relative>span.absolute {top:50%;transform:translateY(-50%);pointer-events:none;}
+    input[type=range] {min-height:20px;}
+    button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible {outline:2px solid #fb7185;outline-offset:3px;}
+    [aria-invalid=true] {border-color:#fb7185!important;}
+    .text-xs {font-size:.875rem;line-height:1.5;}
+    [class*="text-[9px]"],[class*="text-[10px]"],[class*="text-[11px]"] {font-size:.75rem;line-height:1.5;}
+    label {font-size:.875rem!important;}
+    .text-slate-500 {color:#94a3b8;}
+    [id^=res] {font-variant-numeric:tabular-nums;}
+    [class*="lg:col-span-5"] {border-top:2px solid #f43f5e80;}
+    .grid>*, .flex>* {min-width:0;}
+    .flex.justify-between {gap:.5rem;}
+    .validation-message {padding:12px 16px;border:1px solid #fb7185;background:#381521;border-radius:8px;color:#fecdd3;}
+    .model-notes {margin-top:24px;border:1px solid #283448;border-radius:12px;background:#111827;}
+    .model-notes summary {cursor:pointer;padding:18px;font-size:.875rem;font-weight:700;}
+    .model-notes>div {padding:0 18px 18px;color:#aab7ca;font-size:.875rem;line-height:1.7;}
+    .model-notes p+p {margin-top:10px;}
+    .model-notes a {color:#fda4af;text-decoration:underline;}
+    .lab-footer {display:flex;gap:24px;align-items:center;border-top:1px solid #243046;padding-top:24px;padding-bottom:32px;}
+    .lab-footer img {border-radius:10px;flex-shrink:0;}
+    .lab-footer strong {font-size:1rem;}
+    .lab-footer p {font-size:.75rem;color:#94a3b8;line-height:1.7;margin-top:5px;}
+    .skip-link {position:fixed;left:12px;top:-100px;padding:12px;background:#d62a22;z-index:99;}
+    .skip-link:focus {top:12px;}
+    /* Responsive layout: keep columns wide enough for labels, units and touch. */
+    img, svg {max-width:100%;}
+    button {min-height:44px;white-space:normal;line-height:1.4;}
+    button svg, label svg, .category-controls>span svg {flex-shrink:0;}
+    input, select {max-width:100%;min-width:0;}
+    input[type=range] {min-height:44px;touch-action:pan-y;}
+    .brand-wordmark {flex-shrink:0;}
+    .brand-divider {flex-shrink:0;}
+    .preset-controls, .category-controls {flex-wrap:wrap;max-width:100%;}
+    .preset-controls>div, .category-controls>div {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-width:100%;}
+    .preset-controls button, .category-controls button {height:100%;overflow-wrap:anywhere;}
+    .category-controls button span {display:block;white-space:nowrap;}
+    .module-tabs {flex-wrap:wrap;max-width:100%;}
+    .module-tabs button {justify-content:center;flex:1 1 auto;}
+    .input-panel .flex.justify-between,
+    .results-panel .flex.justify-between {flex-wrap:wrap;align-items:center;}
+    .input-panel label, .input-panel h2, .results-panel h3,
+    .model-notes, [id^="eq"], .validation-message {overflow-wrap:anywhere;}
+    .results-panel [id^="res"] {overflow-wrap:anywhere;}
+    .results-panel .grid>div {height:100%;}
+    .input-panel .flex.justify-between>.flex {flex-wrap:wrap;}
+    .lab-footer>div {min-width:0;overflow-wrap:anywhere;}
+    .calculator-grid {grid-template-columns:minmax(0,1fr);}
+    .calculator-grid>.input-panel,
+    .calculator-grid>.results-panel {grid-column:auto;}
+    @media(min-width:1200px) {
+      .calculator-grid {grid-template-columns:minmax(0,5fr) minmax(0,7fr);}
+    }
+    @media(max-width:1199px) {
+      header {position:relative!important;}
+      html {scroll-padding-top:1rem;}
+    }
+    @media(min-width:640px) and (max-width:1199px) {
+      .input-panel, .results-panel {width:100%;}
+      .brand-lockup {gap:16px;}
+      .brand-wordmark {width:180px;}
+    }
+    @media(max-width:639px) {
+      header>div {justify-content:center!important;gap:12px!important;}
+      .brand-lockup {gap:12px;width:100%;justify-content:center;}
+      .brand-wordmark {width:clamp(120px,39vw,180px);}
+      .brand-lockup h1 {font-size:1rem;}
+      .brand-lockup p {font-size:.75rem;max-width:125px;}
+      .preset-controls {width:100%;}
+      .preset-controls>div {width:100%;}
+      .preset-controls button {padding:8px 4px;}
+      main {padding-top:1rem!important;}
+      .module-tabs {width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}
+      .module-tabs button {padding:10px 8px;gap:6px;}
+      .category-controls {width:100%;align-items:stretch;gap:8px;}
+      .category-controls>span {width:100%;}
+      .category-controls>div {width:100%;}
+      .category-controls button {padding:8px 4px;}
+      .calculator-grid {gap:20px;}
+      .input-panel {padding:16px!important;}
+      .input-panel .grid-cols-4 {grid-template-columns:repeat(2,minmax(0,1fr));}
+      .input-panel .grid-cols-5 {gap:4px;}
+      .input-panel .grid-cols-5 button {padding-left:2px;padding-right:2px;}
+      .lab-footer {align-items:flex-start;gap:16px;}
+      .lab-footer img {width:64px;height:64px;}
+      [id^=res].text-3xl {font-size:clamp(1.625rem,7vw,2.25rem);}
+      .model-notes summary {padding:16px;}
+    }
+    @media(max-width:379px) {
+      .brand-lockup {flex-wrap:wrap;row-gap:8px;}
+      .brand-divider {display:none;}
+      .brand-lockup>div:last-child {text-align:center;flex-basis:100%;}
+      .brand-lockup p {max-width:none;}
+      .input-panel .grid-cols-2 {grid-template-columns:minmax(0,1fr);}
+      .input-panel .flex.justify-between>.flex {width:100%;justify-content:space-between;}
+      .lab-footer {flex-direction:column;}
+    }
+    @media(prefers-reduced-motion:reduce) {html{scroll-behavior:auto;}*{transition:none!important;}}
+
+  </style>
+</head>
+<body class="bg-[#0B0F17] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-red-500 selection:text-white">
+
+  <!-- CABEÇALHO COMPACTO -->
+  <header class="border-b border-slate-800 bg-[#0d131f]/95 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Identidade oficial: arte fornecida pela equipe, sem recriação tipográfica. -->
+      <div class="brand-lockup">
+        <img class="brand-wordmark" src="assets/nome-uerjbotz.png" width="448" height="75" alt="UERJBotz" />
+        <div class="brand-divider"></div>
+        <div><h1>Combat Lab</h1><p>Dimensionamento de robôs</p></div>
+      </div>
+
+      <!-- PRESETS DOS ROBÔS NO CANTO SUPERIOR DIREITO -->
+      <div class="preset-controls flex items-center gap-2">
+        <span class="text-xs font-semibold text-slate-400 hidden sm:inline-flex items-center gap-1">
+          <svg class="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Preset:
+        </span>
+        <div class="flex items-center bg-slate-900/90 p-1 rounded-lg border border-slate-800 gap-1">
+          <button type="button" id="presetBtnKillbot" onclick="loadRobotPreset('killbot')" class="px-3 py-1 text-xs font-bold rounded-md transition-all text-slate-300 hover:text-white hover:bg-slate-800 focus:bg-red-600 focus:text-white">
+            Killbot
+          </button>
+          <button type="button" id="presetBtnBlitzen" onclick="loadRobotPreset('blitzen')" class="px-3 py-1 text-xs font-bold rounded-md transition-all text-slate-300 hover:text-white hover:bg-slate-800 focus:bg-red-600 focus:text-white">
+            Blitzen
+          </button>
+          <button type="button" id="presetBtnCustom" onclick="resetDefaults()" title="Modo Customizado" class="px-2 py-1 text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 rounded-md">
+            Customizado
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <a class="skip-link" href="#calculadora">Ir para a calculadora</a>
+  <main id="calculadora" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12">
+
+    <!-- BARRA SUPERIOR: ABAS DE MÓDULOS + SELETOR DE CATEGORIA -->
+    <div class="flex flex-wrap items-center justify-between border-b border-slate-800 mb-6 pb-3 gap-3">
+      <!-- ABAS PRINCIPAIS -->
+      <div class="module-tabs flex gap-2" role="tablist" aria-label="Módulos da calculadora">
+        <button id="tabBtnLocomocao" role="tab" aria-controls="sectionLocomocao" aria-selected="true" onclick="switchMainTab('locomocao')" class="flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all bg-red-600 text-white shadow-md shadow-red-900/30">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v5l3 3"/></svg>
+          1. Locomoção
+        </button>
+        <button id="tabBtnArma" role="tab" tabindex="-1" aria-controls="sectionArma" aria-selected="false" onclick="switchMainTab('arma')" class="flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          2. Arma & Bite
+        </button>
+      </div>
+
+      <!-- SELETOR DE CATEGORIA (ESTILO PRESET: FAIRY, ANT, BEETLE) -->
+      <div class="category-controls flex items-center gap-2">
+        <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-[#D62A22]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+          </svg>
+          Categoria:
+        </span>
+        <div class="flex items-center bg-[#201D1B] p-1 rounded-lg border border-[#3D3733] gap-1">
+          <button type="button" id="catBtnFairy" onclick="selectCategory('fairy', true)" class="px-2.5 py-1 text-xs font-bold rounded-md transition-all text-slate-300 hover:text-white hover:bg-[#2D2926]">
+            Fairy <span class="text-[10px] font-mono opacity-80">(150 g)</span>
+          </button>
+          <button type="button" id="catBtnAnt" onclick="selectCategory('ant', true)" class="px-2.5 py-1 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow">
+            Ant <span class="text-[10px] font-mono opacity-80">(454 g)</span>
+          </button>
+          <button type="button" id="catBtnBeetle" onclick="selectCategory('beetle', true)" class="px-2.5 py-1 text-xs font-bold rounded-md transition-all text-slate-300 hover:text-white hover:bg-[#2D2926]">
+            Beetle <span class="text-[10px] font-mono opacity-80">(1,36 kg)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MÓDULO 1: CALCULADORA DE LOCOMOÇÃO        -->
+    <!-- ========================================== -->
+    <div id="sectionLocomocao" role="tabpanel" aria-labelledby="tabBtnLocomocao" class="space-y-6">
+      <p id="errorLocomocao" role="status" aria-live="polite" class="validation-message hidden"></p>
+      <div class="calculator-grid grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- PAINEL DE ENTRADAS DA LOCOMOÇÃO -->
+        <div class="input-panel lg:col-span-5 bg-[#111827] border border-slate-800 rounded-xl p-5 shadow-xl">
+          
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+              Parâmetros de Tração
+            </h2>
+            <span class="text-xs font-mono text-slate-400">Entrada Físico-Elétrica</span>
+          </div>
+
+          <!-- SELETOR DO TIPO DE LOCOMOÇÃO -->
+          <div class="mb-5">
+            <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wide">Tipo de Acionamento</label>
+            <div class="grid grid-cols-2 gap-2 p-1 bg-slate-900 rounded-lg border border-slate-800">
+              <button type="button" id="driveModeTangencial" onclick="setDriveType('tangencial')" class="py-2 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white">
+                Tangenciada (Atrito)
+              </button>
+              <button type="button" id="driveModeReducao" onclick="setDriveType('reducao')" class="py-2 text-xs font-bold rounded-md transition-all bg-red-600 text-white shadow">
+                Direta / Redução
+              </button>
+            </div>
+            <p id="driveTypeDescription" class="text-[11px] text-slate-400 mt-1.5 leading-tight">
+              Acoplamento direto no centro da roda (Hub Motor, G=1:1) ou através de caixa de redução/polias.
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            
+            <!-- BLUSHLESS VS BRUSHED NA LOCOMOÇÃO DIRETA -->
+            <div id="motorTypeSelectorWrapper">
+              <label class="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wide">Tipo de Motor de Tração</label>
+              <div class="grid grid-cols-2 gap-2 p-1 bg-slate-900 rounded-lg border border-slate-800 mb-2">
+                <button type="button" id="motorTypeBrushedBtn" onclick="setLocoMotorType('brushed')" class="py-1.5 text-xs font-bold rounded-md transition-all bg-red-600 text-white shadow">
+                  Brushed (RPM de Venda)
+                </button>
+                <button type="button" id="motorTypeBrushlessBtn" onclick="setLocoMotorType('brushless')" class="py-1.5 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white">
+                  Brushless (KV)
+                </button>
+              </div>
+            </div>
+
+            <!-- BATERIA BRUSHLESS (ESCONDIDA SE FOR BRUSHED) -->
+            <div id="locoBatteryBlock" class="hidden">
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-bold text-slate-300">Bateria de Tração</label>
+                <span id="locoVoltBadge" class="text-xs font-mono text-red-400 font-semibold">14.8V (4S)</span>
+              </div>
+              <div class="grid grid-cols-5 gap-1.5">
+                <button type="button" onclick="setLocoCells(2)" class="loco-s-btn py-1.5 text-xs font-bold rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700">2S</button>
+                <button type="button" onclick="setLocoCells(3)" class="loco-s-btn py-1.5 text-xs font-bold rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700">3S</button>
+                <button type="button" onclick="setLocoCells(4)" class="loco-s-btn py-1.5 text-xs font-bold rounded bg-red-600 text-white border border-red-500">4S</button>
+                <button type="button" onclick="setLocoCells(5)" class="loco-s-btn py-1.5 text-xs font-bold rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700">5S</button>
+                <button type="button" onclick="setLocoCells(6)" class="loco-s-btn py-1.5 text-xs font-bold rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700">6S</button>
+              </div>
+            </div>
+
+            <!-- KV DO MOTOR (BRUSHLESS) -->
+            <div id="locoKvBlock" class="hidden">
+              <div class="flex justify-between items-center mb-1">
+                <label for="locoKv" class="text-xs font-bold text-slate-300">KV do Motor de Tração</label>
+                <span id="locoMotorModelDisplay" class="text-[10px] font-mono text-red-400 font-semibold"></span>
+              </div>
+              <div class="relative">
+                <input type="number" id="locoKv" value="2300" oninput="onLocoInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="Ex: 2300" />
+                <span class="absolute right-3 top-2 text-xs font-mono text-slate-400">RPM/V</span>
+              </div>
+            </div>
+
+            <!-- DICA DE EQUIVALÊNCIA BRUSHLESS/BRUSHED -->
+            <div id="equivalenceTipBlock" class="hidden p-2.5 rounded-lg bg-blue-950/40 border border-blue-800/60 text-[11px] text-blue-200">
+              <div class="flex items-start gap-2">
+                <span class="text-blue-400 font-bold">💡</span>
+                <span id="equivalenceTipText">Equivalência calculada...</span>
+              </div>
+            </div>
+
+            <!-- RPM NOMINAL DE CATÁLOGO (BRUSHED) -->
+            <div id="locoBrushedRpmBlock">
+              <div class="flex justify-between items-center mb-1">
+                <label for="locoBrushedRpm" class="text-xs font-bold text-slate-300">RPM de catálogo / saída do redutor</label>
+                <span id="locoBrushedModelDisplay" class="text-[10px] font-mono text-red-400 font-semibold">(N20)</span>
+              </div>
+              <div class="relative">
+                <input type="number" id="locoBrushedRpm" value="1000" oninput="onLocoInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="Ex: 1000" />
+                <span class="absolute right-3 top-2 text-xs font-mono text-slate-400">RPM</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Use a rotação de saída na tensão do catálogo. G considera apenas a redução adicional.</p>
+            </div>
+
+            <!-- CAMPOS DINÂMICOS CONFORME O TIPO DE LOCOMOÇÃO -->
+            <div id="fieldTangencialWrapper" class="hidden">
+              <label for="shaftDiameter" class="block text-xs font-bold text-slate-300 mb-1">Diâmetro do Eixo/Pino Motor</label>
+              <div class="relative">
+                <input type="number" id="shaftDiameter" step="0.1" value="3.0" oninput="onLocoInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="Ex: 3.0" />
+                <span class="absolute right-3 top-2 text-xs font-mono text-slate-400">mm</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Pino metálico que toca a borracha da roda.</p>
+            </div>
+
+              <div>
+                <label for="wheelDiameter" class="block text-xs font-bold text-slate-300 mb-1">Diâmetro da Roda</label>
+                <div class="relative">
+                  <input type="number" id="wheelDiameter" step="0.5" value="40" oninput="onLocoInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="Ex: 40" />
+                  <span class="absolute right-3 top-2 text-xs font-mono text-slate-400">mm</span>
+                </div>
+              </div>
+
+            <div id="fieldReducaoWrapper" class="space-y-4">
+              <!-- CONTROLE DA REDUÇÃO COM TOGGLE DE CALCULADORA -->
+              <div class="bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <label class="text-xs font-bold text-slate-300">Relação de Redução (G)</label>
+                    <p class="text-[10px] text-slate-500">Padrão 1:1 Direta</p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span id="gearRatioDisplay" class="text-xs font-mono font-bold text-red-400">1.00 : 1</span>
+                    <button type="button" id="btnToggleReductionCalc" onclick="toggleReductionCalculator()" class="px-2 py-1 text-[11px] font-semibold rounded bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700">
+                      ⚙️ Calcular Redução
+                    </button>
+                  </div>
+                </div>
+
+                <!-- CAMPO MANUAL DE G -->
+                <div id="manualGearRatioWrapper">
+                  <input type="number" id="gearRatio" step="0.05" value="1.0" oninput="updateManualGearRatio()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-red-500" placeholder="1.0 para direto (Hub)" />
+                </div>
+
+                <!-- SUB-CALCULADORA DE REDUÇÃO -->
+                <div id="calcReductionWrapper" class="hidden pt-2 border-t border-slate-800 space-y-2.5">
+                  <div class="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded border border-slate-800">
+                    <button type="button" id="redModeTeeth" onclick="setReductionMode('teeth')" class="py-1 text-[11px] font-bold rounded bg-red-600 text-white">
+                      Por Dentes (Z)
+                    </button>
+                    <button type="button" id="redModeDiameter" onclick="setReductionMode('diameter')" class="py-1 text-[11px] font-bold rounded text-slate-400 hover:text-white">
+                      Por Diâmetro (mm)
+                    </button>
+                  </div>
+
+                  <!-- CAMPOS POR DENTES -->
+                  <div id="redFieldsTeeth" class="grid grid-cols-2 gap-2">
+                    <div>
+                      <label class="block text-[10px] text-slate-400 mb-1">Pinhão / Polia Motor (Z₁)</label>
+                      <input type="number" id="redPinionTeeth" value="14" oninput="calculateCustomReduction()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono" />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] text-slate-400 mb-1">Coroa / Polia Roda (Z₂)</label>
+                      <input type="number" id="redWheelTeeth" value="14" oninput="calculateCustomReduction()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono" />
+                    </div>
+                  </div>
+
+                  <!-- CAMPOS POR DIÂMETRO -->
+                  <div id="redFieldsDiameter" class="hidden grid grid-cols-2 gap-2">
+                    <div>
+                      <label class="block text-[10px] text-slate-400 mb-1">Polia Motor (D₁ mm)</label>
+                      <input type="number" id="redMotorDiam" value="10" oninput="calculateCustomReduction()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono" />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] text-slate-400 mb-1">Polia Roda (D₂ mm)</label>
+                      <input type="number" id="redWheelDiam" value="10" oninput="calculateCustomReduction()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2 py-1 text-xs text-white font-mono" />
+                    </div>
+                  </div>
+
+                  <p class="text-[10px] text-slate-400 font-mono">
+                    Relação calculada: <span id="calculatedRatioText" class="text-red-400 font-bold">1.00 : 1</span>
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- FATOR DE EFICIÊNCIA SOB CARGA -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label for="locoEff" class="text-xs font-bold text-slate-300">Fator de rotação sob carga</label>
+                <span id="locoEffDisplay" class="text-xs font-mono text-slate-400">85%</span>
+              </div>
+              <input type="range" id="locoEff" min="0" max="100" value="85" oninput="updateLocoEff(this.value)" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D62A22]">
+              <span class="text-[10px] text-slate-500">Hipótese de rotação: ajuste com medições. Não é eficiência energética.</span>
+            </div>
+
+            <!-- SUB-MÓDULO: DINÂMICA DE EMPURRÃO & STALL (JUST 'CUZ / ASK AARON) -->
+            <div class="pt-3 border-t border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold text-slate-300 uppercase tracking-wide flex items-center gap-1.5">
+                  <span>🛡️</span> Empurrão & Limite de Tração
+                </label>
+                <span class="text-[10px] font-mono text-red-400 font-semibold">Modelo estático</span>
+              </div>
+
+              <!-- SELETOR 2WD / 4WD E QUANTIDADE DE MOTORES -->
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label for="driveDrivetrainType" class="block text-[11px] text-slate-400 mb-1">Tração</label>
+                  <select id="driveDrivetrainType" onchange="onDrivetrainTypeChange()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#D62A22]">
+                    <option value="2wd" selected>2WD (2 Rodas)</option>
+                    <option value="4wd">4WD (4 Rodas)</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="driveNumMotors" class="block text-[11px] text-slate-400 mb-1">Qtd. Motores Tração</label>
+                  <input type="number" id="driveNumMotors" min="1" max="8" value="2" oninput="onLocoInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#D62A22]" />
+                </div>
+              </div>
+
+              <!-- TIPO DE PNEU / COEFICIENTE DE ATRITO (MU) -->
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label for="driveFrictionMu" class="block text-[11px] text-slate-400 mb-1">Atrito do Pneu (μ)</label>
+                  <select id="driveFrictionMu" onchange="onLocoInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#D62A22]">
+                    <option value="1.0">μ = 1,00 (hipótese)</option>
+                    <option value="0.85" selected>μ = 0,85 (hipótese)</option>
+                    <option value="0.75">μ = 0,75 (hipótese)</option>
+                    <option value="0.55">μ = 0,55 (hipótese)</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="driveMotorPeakCurrent" class="block text-[11px] text-slate-400 mb-1">Corrente no motor (A)</label>
+                  <input type="number" id="driveMotorPeakCurrent" step="0.1" value="1.5" oninput="onLocoInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#D62A22]" placeholder="Ex: 1.5 para N20" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div><label for="robotMass" class="block text-sm text-slate-300 mb-1">Massa real (g)</label><input id="robotMass" type="number" min="0.01" step="any" value="454" oninput="onLocoInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-3 py-2" /></div>
+                <div id="brushedTorqueBlock"><label for="brushedTorque" class="block text-sm text-slate-300 mb-1">Torque por motor (kgf·cm)</label><input id="brushedTorque" type="number" min="0" step="any" placeholder="Dado do fabricante" oninput="onLocoInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-3 py-2" /></div>
+              </div>
+              <p class="text-xs text-slate-400">Brushed: informe o torque disponível na saída do motoredutor, antes de G. Sem esse dado, a razão de torque fica indisponível. Brushless: Kt × corrente é uma aproximação ideal; corrente de bateria e corrente de fase não são equivalentes.</p>
+              <!-- DISTRIBUIÇÃO DE PESO NAS RODAS TRACIONADAS -->
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <label for="driveWeightDist" class="text-[11px] text-slate-400">Peso sobre Rodas Motrizes</label>
+                  <span id="driveWeightDistDisplay" class="text-xs font-mono text-slate-300 font-semibold">65%</span>
+                </div>
+                <input type="range" id="driveWeightDist" min="0" max="100" value="65" oninput="updateDriveWeightDist(this.value)" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#D62A22]">
+                <span class="text-[10px] text-slate-500">2WD com rampa/apoio usa ~60-70%. 4WD com todas as rodas no chão usa 100%.</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PAINEL DE RESULTADOS DA LOCOMOÇÃO -->
+        <div class="results-panel lg:col-span-7 space-y-4">
+          
+          <!-- CARTÕES PRINCIPAIS DE VELOCIDADE COM BORDAS DINÂMICAS -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- VELOCIDADE REAL -->
+            <div id="cardLocoVReal" class="bg-gradient-to-br from-[#121c2d] to-[#111827] border-2 border-emerald-500 rounded-xl p-4 relative overflow-hidden shadow-lg transition-all duration-300">
+              <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-red-500/10 rounded-full blur-xl pointer-events-none"></div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Velocidade Estimada</span>
+                <span id="badgeLocoReal" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">Sob Carga</span>
+              </div>
+              <div class="flex items-baseline gap-2 my-1">
+                <span id="resLocoVRealMs" class="text-3xl sm:text-4xl font-black font-mono text-white">1.78</span>
+                <span class="text-base font-bold text-slate-400">m/s</span>
+              </div>
+              <div class="text-xs font-mono text-slate-300">
+                ≈ <span id="resLocoVRealKmh" class="font-bold text-emerald-400">6.4</span> km/h
+              </div>
+            </div>
+
+            <!-- VELOCIDADE TEÓRICA -->
+            <div id="cardLocoVTeo" class="bg-[#111827] border border-slate-800 rounded-xl p-4 transition-all duration-300">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Velocidade Teórica</span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Livre</span>
+              </div>
+              <div class="flex items-baseline gap-2 my-1">
+                <span id="resLocoVTeoMs" class="text-3xl sm:text-4xl font-black font-mono text-slate-200">2.09</span>
+                <span class="text-base font-bold text-slate-500">m/s</span>
+              </div>
+              <div class="text-xs font-mono text-slate-400">
+                ≈ <span id="resLocoVTeoKmh" class="font-semibold text-slate-300">7.5</span> km/h
+              </div>
+            </div>
+
+          </div>
+
+          <!-- DIAGNÓSTICO DE ARENA COM AÇÕES CORRETIVAS -->
+          <div id="locoDiagBox" class="p-4 rounded-xl border flex items-start gap-3 bg-emerald-950/20 border-emerald-800/50 transition-all duration-300">
+            <span id="locoDiagIcon" class="text-emerald-400 font-bold text-xl leading-none mt-0.5">✓</span>
+            <div class="space-y-1">
+              <h4 id="locoDiagTitle" class="text-xs font-bold text-emerald-300 uppercase tracking-wide">Faixa de referência</h4>
+              <p id="locoDiagText" class="text-xs text-slate-300 leading-relaxed">
+                Velocidade dentro da referência do projeto. O comportamento real depende da aderência, aceleração e controle.
+              </p>
+              <p id="locoDiagAction" class="text-xs font-medium text-emerald-300 pt-1 border-t border-emerald-900/40 mt-1">
+                👉 <strong>Tudo pronto:</strong> Valide a configuração na arena. Este modelo calcula velocidade, não aceleração.
+              </p>
+            </div>
+          </div>
+
+          <!-- NOVO: PAINEL DE EMPURRÃO E ANÁLISE DE STALL (JUST 'CUZ / ASK AARON) -->
+          <div class="bg-[#111827] border border-slate-800 rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <span>⚡</span> Empurrão & Análise de Stall na Parede
+              </h3>
+              <span id="stallSafetyBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/60 font-bold">
+                1.8x (Seguro)
+              </span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center font-mono">
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-0.5">Limite de aderência</span>
+                <span id="resDrivePushForce" class="text-xs sm:text-sm font-bold text-white">0.86 N</span>
+                <span id="resDrivePushGf" class="block text-[9px] text-slate-500">≈ 88 gf</span>
+              </div>
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-0.5">Torque requerido</span>
+                <span id="resDriveSlipTorque" class="text-xs sm:text-sm font-bold text-white">17.2</span>
+                <span class="text-[9px] text-slate-500">mN·m</span>
+              </div>
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-0.5">Torque Motores</span>
+                <span id="resDriveAvailableTorque" class="text-xs sm:text-sm font-bold text-white">31.0</span>
+                <span class="text-[9px] text-slate-500">mN·m</span>
+              </div>
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-0.5">Razão de torque</span>
+                <span id="resDriveStallRatio" class="text-xs sm:text-sm font-bold text-emerald-400">1.80x</span>
+                <span class="text-[9px] text-slate-500">Disponível / requerido</span>
+              </div>
+            </div>
+
+            <!-- DIAGNÓSTICO DE STALL -->
+            <div id="stallDiagBox" class="p-2.5 rounded-lg border text-xs flex items-start gap-2 bg-emerald-950/20 border-emerald-800/50">
+              <span id="stallDiagIcon" class="text-emerald-400 font-bold">✓</span>
+              <p id="stallDiagText" class="text-slate-300 leading-relaxed text-[11px]">
+                <strong>Patinagem Segura (Regra de Ouro Ask Aaron):</strong> Os motores têm torque suficiente para fazer as rodas patinarem ao empurrar um adversário na parede, evitando sobrecarga no ESC e queima de motor por stall.
+              </p>
+            </div>
+          </div>
+
+          <!-- TELEMETRIA OPERACIONAL -->
+          <div class="bg-[#111827] border border-slate-800 rounded-xl p-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+              <span>Rotação estimada do conjunto</span>
+              <span class="text-[10px] font-mono text-slate-500">Sub-sistemas de Rotação</span>
+            </h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono">
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-1">RPM do Motor</span>
+                <span id="resLocoMotorRpm" class="text-sm font-bold text-white">850</span>
+              </div>
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-1">RPM da Roda</span>
+                <span id="resLocoWheelRpm" class="text-sm font-bold text-white">850</span>
+              </div>
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-1">ω da roda</span>
+                <span id="resLocoOmega" class="text-sm font-bold text-white">89</span>
+                <span class="text-[9px] text-slate-500">rad/s</span>
+              </div>
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-1">Frequência da roda</span>
+                <span id="resLocoFreq" class="text-sm font-bold text-white">14</span>
+                <span class="text-[9px] text-slate-500">Hz</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOGGLE RETRÁTIL COM AS EQUAÇÕES FÍSICAS -->
+          <div class="border border-slate-800 rounded-xl overflow-hidden bg-[#111827]">
+            <button type="button" aria-expanded="false" aria-controls="eqLocoContent" onclick="toggleAccordion('eqLocoContent', 'eqLocoIcon')" class="w-full px-4 py-3 text-left font-bold text-xs text-slate-300 flex justify-between items-center hover:bg-slate-800/50 transition">
+              <span class="flex items-center gap-2 font-mono">
+                <span class="text-red-400">ƒ(x)</span> Exibir Equações & Fórmulas Físicas
+              </span>
+              <span id="eqLocoIcon" class="text-slate-400 font-mono text-sm">▼</span>
+            </button>
+            <div id="eqLocoContent" class="hidden px-4 pb-4 pt-1 text-xs text-slate-400 space-y-2 border-t border-slate-800 font-mono bg-slate-900/40">
+              <p>• <strong class="text-slate-200">RPM Livre:</strong> <span class="text-slate-300">RPM<sub>livre</sub> = KV × V<sub>bateria</sub> (ou RPM Nominal de Catálogo)</span></p>
+              <p>• <strong class="text-slate-200">RPM Sob Carga:</strong> <span class="text-slate-300">RPM<sub>carga</sub> = RPM<sub>livre</sub> × Fator de rotação</span></p>
+              <p id="eqLocoDriveSpecific">• <strong class="text-slate-200">Velocidade com Redução/Direta:</strong> <span class="text-slate-300">v = [2π × (RPM / G) / 60] × (d<sub>roda</sub> / 2000)</span></p>
+              <p>• <strong class="text-slate-200">Velocidade em km/h:</strong> <span class="text-slate-300">v<sub>km/h</sub> = v<sub>m/s</sub> × 3.6</span></p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MÓDULO 2: CALCULADORA DE ARMA & BITE      -->
+    <!-- ========================================== -->
+    <div id="sectionArma" role="tabpanel" aria-labelledby="tabBtnArma" class="hidden space-y-6">
+      <p id="errorArma" role="status" aria-live="polite" class="validation-message hidden"></p>
+      <div class="calculator-grid grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- ENTRADAS DA ARMA -->
+        <div class="input-panel lg:col-span-5 bg-[#111827] border border-slate-800 rounded-xl p-5 shadow-xl space-y-4">
+          
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-2">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+              Parâmetros da Arma & Mordida
+            </h2>
+            <span class="text-xs font-mono text-slate-400">Cinemática de Impacto</span>
+          </div>
+
+          <!-- VELOCIDADE DE AVANÇO -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label for="weaponAdvanceSpeed" class="text-xs font-bold text-slate-300">Velocidade relativa de aproximação</label>
+              <button type="button" onclick="syncSpeedFromLocomotion()" class="text-[11px] font-semibold text-red-400 hover:text-red-300 underline">
+                ↺ Puxar da Tração
+              </button>
+            </div>
+            <div class="relative">
+              <input type="number" id="weaponAdvanceSpeed" step="0.05" value="1.78" oninput="onWeaponInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-red-500" placeholder="Ex: 1.78" />
+              <span class="absolute right-3 top-2 text-xs font-mono text-slate-400">m/s</span>
+            </div>
+          </div>
+
+          <!-- NÚMERO DE DENTES -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Número de Dentes da Arma (n)</label>
+            <div class="grid grid-cols-4 gap-2">
+              <button type="button" onclick="setWeaponTeeth(1)" class="weapon-teeth-btn py-1.5 text-xs font-bold rounded bg-[#D62A22] text-white border border-[#D62A22]">1 Dente</button>
+              <button type="button" onclick="setWeaponTeeth(2)" class="weapon-teeth-btn py-1.5 text-xs font-bold rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700">2 Dentes</button>
+              <button type="button" onclick="setWeaponTeeth(3)" class="weapon-teeth-btn py-1.5 text-xs font-bold rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700">3 Dentes</button>
+              <button type="button" onclick="setWeaponTeeth(4)" class="weapon-teeth-btn py-1.5 text-xs font-bold rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700">4 Dentes</button>
+            </div>
+          </div>
+
+          <!-- SELETOR DO TIPO DE MOTOR DA ARMA (BRUSHLESS VS BRUSHED) -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wide">Tipo de Motor da Arma</label>
+            <div class="grid grid-cols-2 gap-2 p-1 bg-slate-900 rounded-lg border border-slate-800 mb-2">
+              <button type="button" id="weaponMotorTypeBrushlessBtn" onclick="setWeaponMotorType('brushless')" class="py-1.5 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow">
+                Brushless (KV + Bateria)
+              </button>
+              <button type="button" id="weaponMotorTypeBrushedBtn" onclick="setWeaponMotorType('brushed')" class="py-1.5 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white">
+                Brushed (RPM Direto)
+              </button>
+            </div>
+          </div>
+
+          <!-- BATERIA & MOTOR BRUSHLESS DA ARMA -->
+          <div id="weaponBrushlessBlock" class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="weaponCellSelect" class="block text-xs font-bold text-slate-300 mb-1">Bateria da Arma</label>
+              <select id="weaponCellSelect" onchange="onWeaponInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-white font-mono focus:outline-none focus:border-[#D62A22] cursor-pointer">
+                <option value="2" selected>2S (7.4V)</option>
+                <option value="3">3S (11.1V)</option>
+                <option value="4">4S (14.8V)</option>
+                <option value="5">5S (18.5V)</option>
+                <option value="6">6S (22.2V)</option>
+              </select>
+            </div>
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label for="weaponMotorKv" class="text-xs font-bold text-slate-300">KV Motor Arma</label>
+                <span id="weaponMotorModelDisplay" class="text-[10px] font-mono text-[#D62A22] font-semibold"></span>
+              </div>
+              <input type="number" id="weaponMotorKv" value="2400" oninput="onWeaponInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-[#D62A22]" placeholder="Ex: 2400" />
+            </div>
+          </div>
+
+          <!-- MOTOR BRUSHED DA ARMA (RPM NOMINAL) -->
+          <div id="weaponBrushedBlock" class="hidden">
+            <div class="flex justify-between items-center mb-1">
+              <label for="weaponBrushedRpm" class="text-xs font-bold text-slate-300">RPM Nominal do Motor (Catálogo)</label>
+              <span id="weaponBrushedModelDisplay" class="text-[10px] font-mono text-[#D62A22] font-semibold"></span>
+            </div>
+            <div class="relative">
+              <input type="number" id="weaponBrushedRpm" value="18000" oninput="onWeaponInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-[#D62A22]" placeholder="Ex: 18000" />
+              <span class="absolute right-3 top-2 text-xs font-mono text-slate-400">RPM</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Rotação do motor brushed (ex: motor 550, 775 ou micro motor) sem redução.</p>
+          </div>
+
+          <div><label for="weaponEff" class="block text-sm text-slate-300 mb-1">Fator de rotação da arma (%)</label><input id="weaponEff" type="number" min="0" max="100" step="any" value="80" oninput="onWeaponInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-3 py-2" /><p class="text-xs text-slate-400 mt-1">80% é uma hipótese inicial. Ajuste com RPM medido.</p></div>
+          <!-- POLIAS (PADRÃO 1:1) -->
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-300">Relação de Polias (Padrão 1:1)</span>
+              <span id="weaponPulleyRatioDisplay" class="text-xs font-mono font-bold text-red-400">1.00 : 1</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="pulleyMotor" class="block text-[11px] text-slate-400 mb-1">Dentes Polia Motor</label>
+                <input type="number" id="pulleyMotor" value="20" oninput="onWeaponInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-red-500" />
+              </div>
+              <div>
+                <label for="pulleyWeapon" class="block text-[11px] text-slate-400 mb-1">Dentes Polia Arma</label>
+                <input type="number" id="pulleyWeapon" value="20" oninput="onWeaponInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-red-500" />
+              </div>
+            </div>
+          </div>
+
+          <!-- GEOMETRIA E INÉRCIA DA ARMA -->
+          <div class="space-y-3 pt-1 border-t border-slate-800">
+            <div>
+              <label for="weaponDiameter" class="block text-xs font-bold text-slate-300 mb-1">Diâmetro Total da Arma</label>
+              <div class="relative">
+                <input type="number" id="weaponDiameter" value="85" oninput="onWeaponInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-red-500" placeholder="Ex: 85" />
+                <span class="absolute right-3 top-2 text-xs font-mono text-slate-400">mm</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label for="weaponIzz" class="text-xs font-bold text-slate-300">Momento de Inércia (I<sub>zz</sub> do CAD)</label>
+                <span class="text-[10px] text-slate-400">Fusion 360</span>
+              </div>
+              <div class="relative">
+                <input type="number" id="weaponIzz" step="10" value="18000" oninput="onWeaponInputChanged()" class="w-full bg-[#1A2233] border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-red-500" placeholder="Ex: 18000" />
+                <span class="absolute right-3 top-2 text-xs font-mono text-slate-400">g·mm²</span>
+              </div>
+              <p class="text-[10px] text-slate-500 mt-1">
+                Confirme unidade e eixo de rotação no CAD. Entrada em g·mm². (<span id="izzKgM2Display" class="text-slate-400 font-mono">1.800e-5</span> kg·m²).
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RESULTADOS DA ARMA E BITE -->
+        <div class="results-panel lg:col-span-7 space-y-4">
+          
+          <!-- CARDS DE BITE E ENERGIA CINÉTICA COM BORDAS DINÂMICAS -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- BITE MÁXIMO -->
+            <div id="cardWeaponBite" class="bg-gradient-to-br from-[#121c2d] to-[#111827] border-2 border-emerald-500 rounded-xl p-4 shadow-lg transition-all duration-300">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Mordida Máxima (Bite)</span>
+                <span id="badgeWeaponBite" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">b<sub>max</sub></span>
+              </div>
+              <div class="flex items-baseline gap-2 my-1">
+                <span id="resBiteMax" class="text-3xl sm:text-4xl font-black font-mono text-white">7.52</span>
+                <span class="text-base font-bold text-slate-400">mm</span>
+              </div>
+              <div class="text-xs font-mono text-slate-300">
+                Média idealizada: <span id="resBiteAvg" class="font-bold text-emerald-400">3.76</span> mm
+              </div>
+            </div>
+
+            <!-- ENERGIA CINÉTICA -->
+            <div class="bg-[#111827] border border-slate-800 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Energia Cinética (E<sub>k</sub>)</span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">½ I ω²</span>
+              </div>
+              <div class="flex items-baseline gap-2 my-1">
+                <span id="resEnergyJoules" class="text-3xl sm:text-4xl font-black font-mono text-slate-200">20.0</span>
+                <span class="text-base font-bold text-slate-500">Joules</span>
+              </div>
+              <div class="text-xs font-mono text-slate-400">
+                Veloc. Periférica: <span id="resTipSpeedKmh" class="font-semibold text-slate-300">225</span> km/h
+              </div>
+            </div>
+
+          </div>
+
+          <!-- DIAGNÓSTICO DO BITE COM AÇÕES CORRETIVAS -->
+          <div id="biteDiagBox" class="p-4 rounded-xl border flex items-start gap-3 bg-emerald-950/20 border-emerald-800/50 transition-all duration-300">
+            <span id="biteDiagIcon" class="text-emerald-400 font-bold text-xl leading-none mt-0.5">✓</span>
+            <div class="space-y-1">
+              <h4 id="biteDiagTitle" class="text-xs font-bold text-emerald-300 uppercase tracking-wide">Bite na faixa de referência</h4>
+              <p id="biteDiagText" class="text-xs text-slate-300 leading-relaxed">
+                Faixa excelente de engajamento mecânico para impacto contundente e arremesso do adversário.
+              </p>
+              <p id="biteDiagAction" class="text-xs font-medium text-emerald-300 pt-1 border-t border-emerald-900/40 mt-1">
+                👉 <strong>Tudo pronto:</strong> Certifique-se de que a saliência radial do dente seja de pelo menos 4 a 5 mm.
+              </p>
+            </div>
+          </div>
+
+          <!-- TELEMETRIA DA ARMA -->
+          <div class="bg-[#111827] border border-slate-800 rounded-xl p-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+              <span>Rotação estimada da arma</span>
+              <span class="text-[10px] font-mono text-slate-500">Modelo cinemático</span>
+            </h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono">
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-1">RPM da Arma</span>
+                <span id="resWeaponRpm" class="text-sm font-bold text-white">14.208</span>
+              </div>
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-1">Veloc. Angular (ω)</span>
+                <span id="resWeaponOmega" class="text-sm font-bold text-white">1.488</span>
+                <span class="text-[9px] text-slate-500">rad/s</span>
+              </div>
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-1">Velocidade Ponta</span>
+                <span id="resTipSpeedMs" class="text-sm font-bold text-white">63.2</span>
+                <span class="text-[9px] text-slate-500">m/s</span>
+              </div>
+              <div class="p-2 bg-slate-900/80 rounded border border-slate-800/80">
+                <span class="block text-[10px] text-slate-400 mb-1">Passagens/seg</span>
+                <span id="resWeaponPasses" class="text-sm font-bold text-white">237</span>
+                <span class="text-[9px] text-slate-500">dentes/s</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOGGLE RETRÁTIL COM AS EQUAÇÕES DO BITE -->
+          <div class="border border-slate-800 rounded-xl overflow-hidden bg-[#111827]">
+            <button type="button" aria-expanded="false" aria-controls="eqArmaContent" onclick="toggleAccordion('eqArmaContent', 'eqArmaIcon')" class="w-full px-4 py-3 text-left font-bold text-xs text-slate-300 flex justify-between items-center hover:bg-slate-800/50 transition">
+              <span class="flex items-center gap-2 font-mono">
+                <span class="text-red-400">ƒ(x)</span> Equações de Mordida & Energia Cinética
+              </span>
+              <span id="eqArmaIcon" class="text-slate-400 font-mono text-sm">▼</span>
+            </button>
+            <div id="eqArmaContent" class="hidden px-4 pb-4 pt-1 text-xs text-slate-400 space-y-2 border-t border-slate-800 font-mono bg-slate-900/40">
+              <p>• <strong class="text-slate-200">RPM do Motor:</strong> <span class="text-slate-300">RPM<sub>motor</sub> = KV × V<sub>bateria</sub> (Brushless) ou RPM Nominal (Brushed)</span></p>
+              <p>• <strong class="text-slate-200">Mordida Máxima (b<sub>max</sub>):</strong> <span class="text-slate-300">b<sub>max</sub> = (v<sub>avanço</sub> × 60) / (n × RPM<sub>arma</sub>) × 1000 [mm]</span></p>
+              <p>• <strong class="text-slate-200">Mordida Média (b<sub>médio</sub>):</strong> <span class="text-slate-300">b<sub>médio</sub> = b<sub>max</sub> / 2</span></p>
+              <p>• <strong class="text-slate-200">Energia Cinética (E<sub>k</sub>):</strong> <span class="text-slate-300">E<sub>k</sub> = ½ × I<sub>zz</sub> × ω² [Joules]</span></p>
+              <p>• <strong class="text-slate-200">Relação de Polias (G):</strong> <span class="text-slate-300">G = Dentes<sub>Arma</sub> / Dentes<sub>Motor</sub> (RPM<sub>arma</sub> = RPM<sub>motor</sub> / G)</span></p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <details class="model-notes"><summary>Hipóteses do modelo e referências</summary>
+      <div><p>Tensão nominal LiPo: 3,7 V por célula. Rotação livre ≈ KV × V; sob carga, aplica-se o fator informado. A bateria carregada tem tensão maior. O modelo não calcula aceleração, queda de tensão ou tempo de spin-up.</p>
+      <p>Tração: F = μ × m × g × fração de peso motriz. Torque requerido = F × raio da roda (ou do pino tangencial). Torque disponível considera motores idênticos, carga igualmente repartida e transmissão ideal. No acionamento tangencial, o contato pino–pneu pode escorregar antes do pneu no chão.</p>
+      <p>Bite: b = 60 × v relativa / (n × RPM) × 1000 mm, para dentes efetivos igualmente espaçados. A média b/2 pressupõe fase de contato uniforme; a geometria limita a penetração real. Arma parada: bite não definido.</p>
+      <p>Energia: E = ½ I ω². 1 g·mm² = 10⁻⁹ kg·m². Use a inércia em torno do eixo real de giro; a energia armazenada não é necessariamente transferida integralmente no impacto.</p>
+      <p>Referências: <a href="https://runamok.tech/AskAaron/spinner_FAQ.html" target="_blank" rel="noopener noreferrer">Team Run Amok — bite e spinners</a> · <a href="https://support.maxongroup.com/hc/en-us/articles/360013761160-Motor-data-and-simulation" target="_blank" rel="noopener noreferrer">maxon — dados de motores</a>.</p></div>
+    </details>
+  </main>
+  <footer class="lab-footer max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
+    <img src="assets/logo-uerjbotz.jpg" width="96" height="96" alt="Símbolo da UERJBotz — Equipe de Robótica da UERJ" loading="lazy" />
+    <div><strong>Do cálculo à arena.</strong><p>Presets são pontos de partida. Confirme massa, tensão, torque e inércia do seu robô.</p><p>Faixas de velocidade e bite são referências configuráveis de projeto, não limites oficiais de competição.</p></div>
+  </footer>
+
+
+  <script>
+
+    let lastLocoSpeed = 0;
+    let initialInputs;
+    function numberOf(id) { return Number(document.getElementById(id).value); }
+    function validFields(ids, section) {
+      let ok = true;
+      document.querySelectorAll('#section'+section+' [aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
+      for (const id of ids) {
+        const el = document.getElementById(id), value = numberOf(id);
+        const invalid = el.value.trim() === '' || !Number.isFinite(value) || value < Number(el.min || 0) || (el.max !== '' && value > Number(el.max)) || (el.step === '1' && !Number.isInteger(value));
+        el.setAttribute('aria-invalid', String(invalid));
+        if (invalid) ok = false;
+      }
+      const error = document.getElementById('error'+section);
+      error.classList.toggle('hidden', ok);
+      error.textContent = ok ? '' : 'Revise os campos destacados: informe valores válidos dentro dos limites indicados.';
+      if (!ok) {
+        document.querySelectorAll('#section'+section+' [id^="res"]').forEach(el => el.innerText = '—');
+        for (const id of section === 'Locomocao' ? ['locoDiagBox','stallDiagBox'] : ['biteDiagBox']) document.getElementById(id).classList.add('hidden');
+        if (section === 'Locomocao') document.getElementById('stallSafetyBadge').innerText = 'Dados inválidos';
+      }
+      return ok;
+    }
+
+    // DEFINIÇÕES DAS CATEGORIAS (FAIRY, ANT, BEETLE)
+    const ROBOT_CATEGORIES = {
+      fairy: { name: 'Fairyweight', weight: '150 g', weightKg: 0.150, biteRange: [1.5, 4.0], vRange: [1.2, 3.5] },
+      ant: { name: 'Antweight', weight: '454 g', weightKg: 0.454, biteRange: [2.0, 6.0], vRange: [1.5, 4.5] },
+      beetle: { name: 'Beetleweight', weight: '1,36 kg', weightKg: 1.360, biteRange: [2.5, 8.0], vRange: [2.0, 5.5] }
+    };
+
+    // ESTADO GLOBAL DO SISTEMA
+    let currentCategory = 'fairy';
+    let currentDriveType = 'reducao';
+    let locoMotorType = 'brushed';
+    let locoCells = 2;
+    let weaponMotorType = 'brushless';
+    let weaponTeeth = 1;
+    let reductionCalculatorActive = false;
+    let reductionMode = 'teeth';
+    let activePreset = 'killbot';
+    let isLoadingPreset = false;
+
+    // PRESETS DOS ROBÔS
+    const ROBOT_PRESETS = {
+      killbot: {
+        name: 'Killbot',
+        category: 'fairy',
+        loco: {
+          type: 'reducao',
+          motorType: 'brushed',
+          motorModel: 'N20',
+          brushedRpm: 1000,
+          cells: 2,
+          kv: 0,
+          shaftDiam: 3.0,
+          wheelDiam: 40,
+          gearRatio: 1.0,
+          eff: 85
+        },
+        weapon: {
+          advanceSpeed: 1.78,
+          teeth: 1,
+          cells: 2,
+          motorKv: 2400,
+          motorModel: '2205',
+          pulleyMotor: 20,
+          pulleyWeapon: 20,
+          diameter: 85,
+          izz: 18000
+        }
+      },
+      blitzen: {
+        name: 'Blitzen',
+        category: 'beetle',
+        loco: {
+          type: 'tangencial',
+          motorType: 'brushless',
+          motorModel: '2205',
+          brushedRpm: 1000,
+          cells: 4,
+          kv: 2300,
+          shaftDiam: 4.0,
+          wheelDiam: 40,
+          gearRatio: 1.0,
+          eff: 80
+        },
+        weapon: {
+          advanceSpeed: 5.70,
+          teeth: 1,
+          cells: 4,
+          motorKv: 1500,
+          motorModel: '2205',
+          pulleyMotor: 20,
+          pulleyWeapon: 20,
+          diameter: 85,
+          izz: 182800
+        }
+      }
+    };
+
+    // TRANSIÇÃO AUTOMÁTICA PARA MODO CUSTOMIZADO AO ALTERAR QUALQUER PARÂMETRO
+    function markAsCustom() {
+      if (isLoadingPreset) return;
+      if (activePreset !== null) {
+        activePreset = null;
+        document.getElementById('presetBtnKillbot').className = 'px-3 py-1 text-xs font-bold rounded-md transition-all text-slate-300 hover:text-white hover:bg-[#201D1B]';
+        document.getElementById('presetBtnBlitzen').className = 'px-3 py-1 text-xs font-bold rounded-md transition-all text-slate-300 hover:text-white hover:bg-[#201D1B]';
+        document.getElementById('presetBtnCustom').className = 'px-2 py-1 text-xs font-bold rounded-md bg-[#D62A22] text-white shadow';
+
+        // Oculta identificadores de modelo específicos do preset antigo
+        const locoMotorDisp = document.getElementById('locoMotorModelDisplay');
+        const locoBrushedDisp = document.getElementById('locoBrushedModelDisplay');
+        const weaponMotorDisp = document.getElementById('weaponMotorModelDisplay');
+        const weaponBrushedDisp = document.getElementById('weaponBrushedModelDisplay');
+        if (locoMotorDisp) locoMotorDisp.innerText = '';
+        if (locoBrushedDisp) locoBrushedDisp.innerText = '';
+        if (weaponMotorDisp) weaponMotorDisp.innerText = '';
+        if (weaponBrushedDisp) weaponBrushedDisp.innerText = '';
+      }
+    }
+
+    // SELEÇÃO DE CATEGORIA
+    function selectCategory(catKey, isUserAction = false) {
+      if (!ROBOT_CATEGORIES[catKey]) return;
+      currentCategory = catKey;
+      document.getElementById("robotMass").value = ROBOT_CATEGORIES[catKey].weightKg * 1000;
+
+      if (isUserAction) {
+        markAsCustom();
+      }
+
+      const btnFairy = document.getElementById('catBtnFairy');
+      const btnAnt = document.getElementById('catBtnAnt');
+      const btnBeetle = document.getElementById('catBtnBeetle');
+
+      const activeClass = 'px-2.5 py-1 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow';
+      const inactiveClass = 'px-2.5 py-1 text-xs font-bold rounded-md transition-all text-slate-300 hover:text-white hover:bg-[#201D1B]';
+
+      btnFairy.className = catKey === 'fairy' ? activeClass : inactiveClass;
+      btnAnt.className = catKey === 'ant' ? activeClass : inactiveClass;
+      btnBeetle.className = catKey === 'beetle' ? activeClass : inactiveClass;
+
+      calculateLocomotion();
+      calculateWeaponBite();
+    }
+
+    // ALTERNÂNCIA DE ABAS
+    function switchMainTab(tab) {
+      const btnLoco = document.getElementById('tabBtnLocomocao');
+      btnLoco.tabIndex = tab === 'locomocao' ? 0 : -1;
+      document.getElementById('tabBtnArma').tabIndex = tab === 'arma' ? 0 : -1;
+      const btnArma = document.getElementById('tabBtnArma');
+      const secLoco = document.getElementById('sectionLocomocao');
+      const secArma = document.getElementById('sectionArma');
+      btnLoco.setAttribute('aria-selected', String(tab === 'locomocao'));
+      btnArma.setAttribute('aria-selected', String(tab === 'arma'));
+
+      if (tab === 'locomocao') {
+        btnLoco.className = 'flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all bg-red-600 text-white shadow-md shadow-red-900/30';
+        btnArma.className = 'flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800';
+        secLoco.classList.remove('hidden');
+        secArma.classList.add('hidden');
+      } else {
+        btnArma.className = 'flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all bg-red-600 text-white shadow-md shadow-red-900/30';
+        btnLoco.className = 'flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800';
+        secArma.classList.remove('hidden');
+        secLoco.classList.add('hidden');
+      }
+    }
+
+    // ALTERNÂNCIA DO TIPO DE TRAÇÃO
+    function setDriveType(type) {
+      markAsCustom();
+      currentDriveType = type;
+      const btnTang = document.getElementById('driveModeTangencial');
+      const btnRed = document.getElementById('driveModeReducao');
+      const fieldTang = document.getElementById('fieldTangencialWrapper');
+      const fieldRed = document.getElementById('fieldReducaoWrapper');
+      const desc = document.getElementById('driveTypeDescription');
+      const eqSpec = document.getElementById('eqLocoDriveSpecific');
+      const motorTypeSelector = document.getElementById('motorTypeSelectorWrapper');
+
+      if (type === 'tangencial') {
+        btnTang.className = 'py-2 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow';
+        btnRed.className = 'py-2 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white';
+        fieldTang.classList.remove('hidden');
+        fieldRed.classList.add('hidden');
+        motorTypeSelector.classList.add('hidden');
+        setLocoMotorType('brushless');
+        desc.innerText = 'A haste do motor toca a borda da roda por atrito direto. O diâmetro do pino define a velocidade.';
+        eqSpec.innerHTML = '<strong class="text-slate-200">Velocidade Tangenciada:</strong> <span class="text-slate-300">v = (2π × RPM / 60) × (d<sub>pino</sub> / 2000)</span>';
+      } else {
+        btnRed.className = 'py-2 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow';
+        btnTang.className = 'py-2 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white';
+        fieldTang.classList.add('hidden');
+        fieldRed.classList.remove('hidden');
+        motorTypeSelector.classList.remove('hidden');
+        setLocoMotorType('brushed');
+        desc.innerText = 'Acoplamento direto no centro da roda (Hub Motor, G=1:1) ou através de caixa de redução/polias.';
+        eqSpec.innerHTML = '<strong class="text-slate-200">Velocidade com Redução/Direta:</strong> <span class="text-slate-300">v = [2π × (RPM / G) / 60] × (d<sub>roda</sub> / 2000)</span>';
+      }
+      onLocoInputChanged();
+    }
+
+    // ALTERNÂNCIA BRUSHLESS VS BRUSHED
+    function setLocoMotorType(type) {
+      markAsCustom();
+      locoMotorType = type;
+      document.getElementById('brushedTorqueBlock').classList.toggle('hidden', type !== 'brushed');
+      document.getElementById('driveMotorPeakCurrent').disabled = type === 'brushed';
+      const btnBrushless = document.getElementById('motorTypeBrushlessBtn');
+      const btnBrushed = document.getElementById('motorTypeBrushedBtn');
+      const batBlock = document.getElementById('locoBatteryBlock');
+      const kvBlock = document.getElementById('locoKvBlock');
+      const brushedBlock = document.getElementById('locoBrushedRpmBlock');
+      const tipBlock = document.getElementById('equivalenceTipBlock');
+      const tipText = document.getElementById('equivalenceTipText');
+
+      if (type === 'brushless') {
+        btnBrushless.className = 'py-1.5 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow';
+        btnBrushed.className = 'py-1.5 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white';
+        batBlock.classList.remove('hidden');
+        kvBlock.classList.remove('hidden');
+        brushedBlock.classList.add('hidden');
+
+        if (currentDriveType === 'reducao') {
+          const targetRpm = parseFloat(document.getElementById('locoBrushedRpm').value) || 1000;
+          const voltage = locoCells * 3.7;
+          const directKv = Math.round(targetRpm / voltage);
+          const typicalKv = 2300;
+          const neededRatio = ((typicalKv * voltage) / targetRpm).toFixed(1);
+
+          tipBlock.classList.remove('hidden');
+          tipText.innerHTML = `Para atingir os mesmos <strong>${targetRpm} RPM</strong> em <strong>${locoCells}S (${voltage.toFixed(1)}V)</strong>: utilize um motor Brushless direto de <strong>~${directKv} KV</strong>, ou um motor comum de <strong>${typicalKv} KV</strong> com redução mecânica de <strong>${neededRatio} : 1</strong>.`;
+        } else {
+          tipBlock.classList.add('hidden');
+        }
+      } else {
+        btnBrushed.className = 'py-1.5 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow';
+        btnBrushless.className = 'py-1.5 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white';
+        batBlock.classList.add('hidden');
+        kvBlock.classList.add('hidden');
+        brushedBlock.classList.remove('hidden');
+        tipBlock.classList.add('hidden');
+      }
+      onLocoInputChanged();
+    }
+
+    // MANIPULADORES DE ENTRADA MANUAL
+    function onLocoInputChanged() {
+      markAsCustom();
+      calculateLocomotion();
+    }
+
+    function onWeaponInputChanged() {
+      markAsCustom();
+      calculateWeaponBite();
+    }
+
+    // TOGGLE DA CALCULADORA DE REDUÇÃO
+    function toggleReductionCalculator() {
+      reductionCalculatorActive = !reductionCalculatorActive;
+      const wrapper = document.getElementById('calcReductionWrapper');
+      const btn = document.getElementById('btnToggleReductionCalc');
+      const manualWrapper = document.getElementById('manualGearRatioWrapper');
+
+      if (reductionCalculatorActive) {
+        document.getElementById('redPinionTeeth').value = 14;
+        document.getElementById('redWheelTeeth').value = 14 * numberOf('gearRatio');
+        document.getElementById('redMotorDiam').value = 10;
+        document.getElementById('redWheelDiam').value = 10;
+        setReductionMode('teeth');
+
+        wrapper.classList.remove('hidden');
+        manualWrapper.classList.add('hidden');
+        btn.className = 'px-2 py-1 text-[11px] font-semibold rounded bg-[#D62A22] text-white';
+        btn.innerText = '✕ Fechar Calculadora';
+        calculateCustomReduction();
+      } else {
+        wrapper.classList.add('hidden');
+        manualWrapper.classList.remove('hidden');
+        btn.className = 'px-2 py-1 text-[11px] font-semibold rounded bg-[#201D1B] border border-[#3D3733] text-slate-300 hover:text-white hover:bg-[#2D2926]';
+        btn.innerText = '⚙️ Calcular Redução';
+        calculateLocomotion();
+      }
+    }
+
+    function setReductionMode(mode) {
+      markAsCustom();
+      reductionMode = mode;
+      const btnTeeth = document.getElementById('redModeTeeth');
+      const btnDiam = document.getElementById('redModeDiameter');
+      const fieldsTeeth = document.getElementById('redFieldsTeeth');
+      const fieldsDiam = document.getElementById('redFieldsDiameter');
+
+      if (mode === 'teeth') {
+        btnTeeth.className = 'py-1 text-[11px] font-bold rounded bg-[#D62A22] text-white';
+        btnDiam.className = 'py-1 text-[11px] font-bold rounded text-slate-400 hover:text-white';
+        fieldsTeeth.classList.remove('hidden');
+        fieldsDiam.classList.add('hidden');
+      } else {
+        btnDiam.className = 'py-1 text-[11px] font-bold rounded bg-[#D62A22] text-white';
+        btnTeeth.className = 'py-1 text-[11px] font-bold rounded text-slate-400 hover:text-white';
+        fieldsDiam.classList.remove('hidden');
+        fieldsTeeth.classList.add('hidden');
+      }
+      calculateCustomReduction();
+    }
+
+    function calculateCustomReduction() {
+      markAsCustom();
+      if (!validFields(reductionMode === 'teeth' ? ['redPinionTeeth','redWheelTeeth'] : ['redMotorDiam','redWheelDiam'], 'Locomocao')) { lastLocoSpeed = null; document.getElementById('calculatedRatioText').innerText = '—'; return; }
+      let ratio = 1.0;
+      if (reductionMode === 'teeth') {
+        const z1 = parseFloat(document.getElementById('redPinionTeeth').value) || 1;
+        const z2 = parseFloat(document.getElementById('redWheelTeeth').value) || 1;
+        ratio = z2 / z1;
+      } else {
+        const d1 = parseFloat(document.getElementById('redMotorDiam').value) || 1;
+        const d2 = parseFloat(document.getElementById('redWheelDiam').value) || 1;
+        ratio = d2 / d1;
+      }
+
+      document.getElementById('gearRatio').value = String(ratio);
+      document.getElementById('gearRatioDisplay').innerText = `${ratio.toFixed(2)} : 1`;
+      document.getElementById('calculatedRatioText').innerText = `${ratio.toFixed(2)} : 1`;
+      onLocoInputChanged();
+    }
+
+    function updateManualGearRatio() {
+      markAsCustom();
+      if (!validFields(['gearRatio'], 'Locomocao')) {
+        document.getElementById('gearRatioDisplay').innerText = '—'; lastLocoSpeed = null; return;
+      }
+      const val = numberOf('gearRatio');
+      document.getElementById('gearRatioDisplay').innerText = `${val.toFixed(2)} : 1`;
+      onLocoInputChanged();
+    }
+
+    function setLocoCells(cells) {
+      markAsCustom();
+      locoCells = cells;
+      const buttons = document.querySelectorAll('.loco-s-btn');
+      buttons.forEach((btn, index) => {
+        if (index + 2 === cells) {
+          btn.className = 'loco-s-btn py-1.5 text-xs font-bold rounded bg-[#D62A22] text-white border border-[#D62A22]';
+        } else {
+          btn.className = 'loco-s-btn py-1.5 text-xs font-bold rounded bg-[#201D1B] border border-[#3D3733] text-slate-300 hover:bg-[#2D2926]';
+        }
+      });
+      const nominalV = (cells * 3.7).toFixed(1);
+      document.getElementById('locoVoltBadge').innerText = `${nominalV}V (${cells}S)`;
+      onLocoInputChanged();
+    }
+
+    function updateLocoEff(val) {
+      markAsCustom();
+      document.getElementById('locoEffDisplay').innerText = `${val}%`;
+      onLocoInputChanged();
+    }
+
+    function updateDriveWeightDist(val) {
+      markAsCustom();
+      const disp = document.getElementById('driveWeightDistDisplay');
+      if (disp) disp.innerText = `${val}%`;
+      onLocoInputChanged();
+    }
+
+    function onDrivetrainTypeChange() {
+      markAsCustom();
+      const type = document.getElementById('driveDrivetrainType').value;
+      const weightDistInput = document.getElementById('driveWeightDist');
+      const numMotorsInput = document.getElementById('driveNumMotors');
+
+      if (type === '4wd') {
+        if (weightDistInput) {
+          weightDistInput.value = 100;
+          updateDriveWeightDist(100);
+        }
+
+      } else {
+        if (weightDistInput) {
+          weightDistInput.value = 65;
+          updateDriveWeightDist(65);
+        }
+
+      }
+      onLocoInputChanged();
+    }
+
+    // CÁLCULO PRINCIPAL DA LOCOMOÇÃO
+    function calculateLocomotion() {
+      const ids = ['locoEff','wheelDiameter','robotMass','driveNumMotors','driveWeightDist','driveFrictionMu', locoMotorType === 'brushless' ? 'locoKv' : 'locoBrushedRpm', currentDriveType === 'tangencial' ? 'shaftDiameter' : 'gearRatio'];
+      if (reductionCalculatorActive && currentDriveType === 'reducao') ids.push(...(reductionMode === 'teeth' ? ['redPinionTeeth','redWheelTeeth'] : ['redMotorDiam','redWheelDiam']));
+      if (!validFields(ids, 'Locomocao')) { lastLocoSpeed = null; return; }
+      const eff = numberOf('locoEff') / 100;
+
+      let motorRpmTeo = 0;
+      let motorRpmReal = 0;
+
+      if (locoMotorType === 'brushless') {
+        const kv = parseFloat(document.getElementById('locoKv').value) || 0;
+        const nominalVoltage = locoCells * 3.7;
+        motorRpmTeo = kv * nominalVoltage;
+        motorRpmReal = motorRpmTeo * eff;
+      } else {
+        const nominalRpm = parseFloat(document.getElementById('locoBrushedRpm').value) || 0;
+        motorRpmTeo = nominalRpm;
+        motorRpmReal = nominalRpm * eff;
+      }
+
+      let vTeoMs = 0;
+      let vRealMs = 0;
+      let wheelRpm = 0;
+      let contactRadiusM = 0.02; // Raio em contato com o chão
+
+      if (currentDriveType === 'tangencial') {
+        const shaftDiamMm = parseFloat(document.getElementById('shaftDiameter').value) || 0;
+        const shaftRadiusM = (shaftDiamMm / 2) / 1000;
+        contactRadiusM = shaftRadiusM;
+        const omegaMotorTeo = (2 * Math.PI * motorRpmTeo) / 60;
+        const omegaMotorReal = (2 * Math.PI * motorRpmReal) / 60;
+
+        vTeoMs = omegaMotorTeo * shaftRadiusM;
+        vRealMs = omegaMotorReal * shaftRadiusM;
+        wheelRpm = (motorRpmReal * shaftDiamMm) / numberOf('wheelDiameter');
+      } else {
+        const wheelDiamMm = parseFloat(document.getElementById('wheelDiameter').value) || 0;
+        const gearRatio = parseFloat(document.getElementById('gearRatio').value) || 1.0;
+        const wheelRadiusM = (wheelDiamMm / 2) / 1000;
+        contactRadiusM = wheelRadiusM;
+
+        wheelRpm = motorRpmReal / gearRatio;
+        const omegaWheelTeo = (2 * Math.PI * (motorRpmTeo / gearRatio)) / 60;
+        const omegaWheelReal = (2 * Math.PI * wheelRpm) / 60;
+
+        vTeoMs = omegaWheelTeo * wheelRadiusM;
+        vRealMs = omegaWheelReal * wheelRadiusM;
+      }
+
+      lastLocoSpeed = vRealMs;
+      const vTeoKmh = vTeoMs * 3.6;
+      const vRealKmh = vRealMs * 3.6;
+      const omegaDisp = (2 * Math.PI * wheelRpm) / 60;
+      const freqDisp = wheelRpm / 60;
+
+      document.getElementById('resLocoVRealMs').innerText = vRealMs.toFixed(2);
+      document.getElementById('resLocoVRealKmh').innerText = vRealKmh.toFixed(1);
+      document.getElementById('resLocoVTeoMs').innerText = vTeoMs.toFixed(2);
+      document.getElementById('resLocoVTeoKmh').innerText = vTeoKmh.toFixed(1);
+
+      document.getElementById('resLocoMotorRpm').innerText = Math.round(motorRpmReal).toLocaleString('pt-BR');
+      document.getElementById('resLocoWheelRpm').innerText = Math.round(wheelRpm).toLocaleString('pt-BR');
+      document.getElementById('resLocoOmega').innerText = Math.round(omegaDisp).toLocaleString('pt-BR');
+      document.getElementById('resLocoFreq').innerText = Math.round(freqDisp).toLocaleString('pt-BR');
+
+      updateLocomotionDiagnostic(vRealMs);
+      calculatePushDynamics(contactRadiusM);
+      const tip = document.getElementById('equivalenceTipBlock');
+      if (locoMotorType === 'brushless' && currentDriveType === 'reducao') {
+        const target = numberOf('locoBrushedRpm'), voltage = locoCells * 3.7;
+        tip.classList.toggle('hidden', !(target > 0));
+        if (target > 0) document.getElementById('equivalenceTipText').textContent = `Referência sem carga: para ${target} RPM em ${locoCells}S, KV ≈ ${(target / voltage).toFixed(1)}; com 2300 KV, redução ≈ ${(2300 * voltage / target).toFixed(1)}:1. Equivalência de rotação, não de torque.`;
+      } else tip.classList.add('hidden');
+    }
+
+    // CÁLCULO DE DINÂMICA DE EMPURRÃO E RISCO DE STALL (JUST 'CUZ / ASK AARON)
+    function calculatePushDynamics(contactRadiusM) {
+      const force = numberOf('driveFrictionMu') * numberOf('robotMass') / 1000 * 9.81 * numberOf('driveWeightDist') / 100;
+      const required = force * contactRadiusM;
+      let torque = null;
+      if (locoMotorType === 'brushed') {
+        const el = document.getElementById('brushedTorque');
+        if (el.value !== '' && Number.isFinite(numberOf(el.id)) && numberOf(el.id) >= 0) torque = numberOf(el.id) * 0.0980665;
+        el.setAttribute('aria-invalid', String(el.value !== '' && torque === null));
+      } else {
+        const el = document.getElementById('driveMotorPeakCurrent');
+        const current = numberOf(el.id), kv = numberOf('locoKv');
+        if (el.value !== '' && Number.isFinite(current) && current >= 0 && kv > 0) torque = 60 / (2 * Math.PI * kv) * current;
+        el.setAttribute('aria-invalid', String(torque === null));
+      }
+      const total = torque === null ? null : torque * numberOf('driveNumMotors') * (currentDriveType === 'reducao' ? numberOf('gearRatio') : 1);
+      document.getElementById('resDrivePushForce').innerText = force.toFixed(2) + ' N';
+      document.getElementById('resDrivePushGf').innerText = '≈ ' + Math.round(force / 9.81 * 1000) + ' gf';
+      document.getElementById('resDriveSlipTorque').innerText = (required * 1000).toFixed(1);
+      document.getElementById('resDriveAvailableTorque').innerText = total === null ? '—' : (total * 1000).toFixed(1);
+      const ratio = total === null || required === 0 ? null : total / required;
+      document.getElementById('resDriveStallRatio').innerText = ratio === null ? '—' : ratio.toFixed(2) + '×';
+      updateStallDiagnostic(ratio);
+    }
+
+    function updateStallDiagnostic(ratio) {
+      const badge = document.getElementById('stallSafetyBadge'), box = document.getElementById('stallDiagBox');
+      badge.className = 'text-xs px-2 py-1 rounded bg-slate-800 text-slate-300';
+      box.className = 'p-3 rounded-lg border border-slate-700 bg-slate-900 text-sm flex items-start gap-2';
+      document.getElementById('stallDiagIcon').innerText = 'ⓘ';
+      badge.innerText = ratio === null ? 'Dados insuficientes' : ratio >= 1 ? 'Patinagem possível' : 'Abaixo do limite';
+      document.getElementById('stallDiagText').innerText = ratio === null
+        ? 'Informe o torque por motor (brushed) ou dados válidos de KV e corrente (brushless). A razão também é indefinida quando a força normal é zero.'
+        : ratio >= 1
+        ? 'O torque ideal supera o necessário para patinar. Isso não garante proteção contra stall ou aquecimento: perdas, contato pino–pneu, controlador e limites de corrente alteram o resultado.'
+        : 'O torque informado não atinge o limite de patinagem neste modelo. Um obstáculo pode imobilizar o conjunto; a corrente e o aquecimento dependem do motor e do controlador.';
+    }
+
+    // DIAGNÓSTICO DE DIRIGIBILIDADE CONFORME A CATEGORIA ATIVA
+    function updateLocomotionDiagnostic(v) {
+      const box = document.getElementById('locoDiagBox');
+      const icon = document.getElementById('locoDiagIcon');
+      const title = document.getElementById('locoDiagTitle');
+      const text = document.getElementById('locoDiagText');
+      const action = document.getElementById('locoDiagAction');
+      const card = document.getElementById('cardLocoVReal');
+      const badge = document.getElementById('badgeLocoReal');
+
+      const catInfo = ROBOT_CATEGORIES[currentCategory] || ROBOT_CATEGORIES.ant;
+      const [vMin, vMax] = catInfo.vRange;
+
+      if (v < vMin) {
+        card.className = 'bg-gradient-to-br from-[#1a1c12] to-[#111827] border-2 border-amber-500 rounded-xl p-4 relative overflow-hidden shadow-lg shadow-amber-950/20 transition-all duration-300';
+        badge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800/60';
+        document.getElementById('resLocoVRealKmh').className = 'font-bold text-amber-400';
+
+        box.className = 'p-4 rounded-xl border flex items-start gap-3 bg-amber-950/20 border-amber-800/60 transition-all duration-300';
+        icon.className = 'text-amber-400 font-bold text-xl leading-none mt-0.5';
+        icon.innerText = '⚠';
+        title.className = 'text-xs font-bold text-amber-300 uppercase tracking-wide';
+        title.innerText = `Abaixo da referência para ${catInfo.name} (< ${vMin.toFixed(1)} m/s)`;
+        text.innerText = 'A velocidade está abaixo da referência do projeto. Avalie a distância disponível e a velocidade relativa de aproximação.';
+        action.className = 'text-xs font-medium text-amber-300 pt-1 border-t border-amber-900/40 mt-1';
+        action.innerHTML = '👉 <strong>O que fazer para corrigir:</strong> Aumente o RPM do motor de tração, aumente o diâmetro das rodas ou reduza a relação de redução.';
+      } else if (v <= vMax) {
+        card.className = 'bg-gradient-to-br from-[#121c2d] to-[#111827] border-2 border-emerald-500 rounded-xl p-4 relative overflow-hidden shadow-lg shadow-emerald-950/20 transition-all duration-300';
+        badge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/60';
+        document.getElementById('resLocoVRealKmh').className = 'font-bold text-emerald-400';
+
+        box.className = 'p-4 rounded-xl border flex items-start gap-3 bg-emerald-950/20 border-emerald-800/60 transition-all duration-300';
+        icon.className = 'text-emerald-400 font-bold text-xl leading-none mt-0.5';
+        icon.innerText = '✓';
+        title.className = 'text-xs font-bold text-emerald-300 uppercase tracking-wide';
+        title.innerText = `Faixa de referência para ${catInfo.name} (${vMin.toFixed(1)} - ${vMax.toFixed(1)} m/s)`;
+        text.innerText = 'Velocidade balanceada e competitiva. Excelente compromisso entre controle fino de linha e profundidade de penetração do dente.';
+        action.className = 'text-xs font-medium text-emerald-300 pt-1 border-t border-emerald-900/40 mt-1';
+        action.innerHTML = '👉 <strong>Tudo pronto:</strong> Mantenha essa configuração. Garanta boa tração para sustentar a aceleração na arena.';
+      } else {
+        card.className = 'bg-gradient-to-br from-[#261214] to-[#111827] border-2 border-rose-500 rounded-xl p-4 relative overflow-hidden shadow-lg shadow-rose-950/20 transition-all duration-300';
+        badge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-800/60';
+        document.getElementById('resLocoVRealKmh').className = 'font-bold text-rose-400';
+
+        box.className = 'p-4 rounded-xl border flex items-start gap-3 bg-rose-950/20 border-rose-800/60 transition-all duration-300';
+        icon.className = 'text-rose-400 font-bold text-xl leading-none mt-0.5';
+        icon.innerText = '⚡';
+        title.className = 'text-xs font-bold text-rose-300 uppercase tracking-wide';
+        title.innerText = `Acima da referência (> ${vMax.toFixed(1)} m/s)`;
+        text.innerText = 'A velocidade supera a referência adotada. Avalie controle, tamanho da arena e aderência em testes.';
+        action.className = 'text-xs font-medium text-rose-300 pt-1 border-t border-rose-900/40 mt-1';
+        action.innerHTML = '👉 <strong>O que fazer para corrigir:</strong> Reduza o diâmetro do pino de atrito (se tangencial), aumente a redução mecânica ou reduza a tensão da bateria.';
+      }
+    }
+
+    function syncSpeedFromLocomotion() {
+      markAsCustom();
+      calculateLocomotion();
+      if (lastLocoSpeed === null) return;
+      document.getElementById('weaponAdvanceSpeed').value = String(Number(lastLocoSpeed.toFixed(6)));
+      onWeaponInputChanged();
+    }
+
+    // ALTERNÂNCIA BRUSHLESS VS BRUSHED NA ARMA
+    function setWeaponMotorType(type) {
+      markAsCustom();
+      weaponMotorType = type;
+      const btnBrushless = document.getElementById('weaponMotorTypeBrushlessBtn');
+      const btnBrushed = document.getElementById('weaponMotorTypeBrushedBtn');
+      const brushlessBlock = document.getElementById('weaponBrushlessBlock');
+      const brushedBlock = document.getElementById('weaponBrushedBlock');
+
+      if (type === 'brushless') {
+        btnBrushless.className = 'py-1.5 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow';
+        btnBrushed.className = 'py-1.5 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white';
+        brushlessBlock.classList.remove('hidden');
+        brushedBlock.classList.add('hidden');
+      } else {
+        btnBrushed.className = 'py-1.5 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow';
+        btnBrushless.className = 'py-1.5 text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white';
+        brushlessBlock.classList.add('hidden');
+        brushedBlock.classList.remove('hidden');
+      }
+      onWeaponInputChanged();
+    }
+
+    function setWeaponTeeth(n) {
+      markAsCustom();
+      weaponTeeth = n;
+      const btns = document.querySelectorAll('.weapon-teeth-btn');
+      btns.forEach((btn, idx) => {
+        if (idx + 1 === n) {
+          btn.className = 'weapon-teeth-btn py-1.5 text-xs font-bold rounded bg-[#D62A22] text-white border border-[#D62A22]';
+        } else {
+          btn.className = 'weapon-teeth-btn py-1.5 text-xs font-bold rounded bg-[#201D1B] border border-[#3D3733] text-slate-300 hover:bg-[#2D2926]';
+        }
+      });
+      onWeaponInputChanged();
+    }
+
+    // CÁLCULO DA ARMA E BITE
+    function calculateWeaponBite() {
+      if (!validFields(['weaponAdvanceSpeed','pulleyMotor','pulleyWeapon','weaponDiameter','weaponIzz','weaponEff', weaponMotorType === 'brushed' ? 'weaponBrushedRpm' : 'weaponMotorKv'], 'Arma')) return;
+      const vAdvance = numberOf('weaponAdvanceSpeed');
+      const pMotor = numberOf('pulleyMotor');
+      const pWeapon = numberOf('pulleyWeapon');
+      const weaponDiamMm = numberOf('weaponDiameter');
+      const izzGmm2 = numberOf('weaponIzz');
+
+      const gearRatio = pWeapon / pMotor;
+      document.getElementById('weaponPulleyRatioDisplay').innerText = `${gearRatio.toFixed(2)} : 1`;
+
+      let motorRpmReal = 0;
+      if (weaponMotorType === 'brushed') {
+        const brushedRpm = parseFloat(document.getElementById('weaponBrushedRpm').value) || 0;
+        motorRpmReal = brushedRpm * numberOf('weaponEff') / 100;
+      } else {
+        const cells = parseInt(document.getElementById('weaponCellSelect').value) || 2;
+        const kv = parseFloat(document.getElementById('weaponMotorKv').value) || 0;
+        const nominalVoltage = cells * 3.7;
+        motorRpmReal = (kv * nominalVoltage) * numberOf('weaponEff') / 100;
+      }
+
+      const weaponRpm = motorRpmReal / gearRatio;
+      const omegaWeapon = (2 * Math.PI * weaponRpm) / 60;
+
+      const izzKgM2 = izzGmm2 * 1e-9;
+      document.getElementById('izzKgM2Display').innerText = izzKgM2.toExponential(3);
+
+      const energyJoules = 0.5 * izzKgM2 * Math.pow(omegaWeapon, 2);
+
+      let biteMaxMm = 0;
+      if (weaponRpm > 0 && weaponTeeth > 0) {
+        biteMaxMm = ((vAdvance * 60) / (weaponTeeth * weaponRpm)) * 1000;
+      }
+      const biteAvgMm = biteMaxMm / 2;
+
+      const weaponRadiusM = (weaponDiamMm / 2) / 1000;
+      const tipSpeedMs = omegaWeapon * weaponRadiusM;
+      const tipSpeedKmh = tipSpeedMs * 3.6;
+      const passesPerSec = (weaponRpm / 60) * weaponTeeth;
+
+      document.getElementById('resBiteMax').innerText = biteMaxMm.toFixed(2);
+      document.getElementById('resBiteAvg').innerText = biteAvgMm.toFixed(2);
+      document.getElementById('resEnergyJoules').innerText = energyJoules.toFixed(1);
+      document.getElementById('resTipSpeedKmh').innerText = Math.round(tipSpeedKmh);
+      document.getElementById('resTipSpeedMs').innerText = tipSpeedMs.toFixed(1);
+      document.getElementById('resWeaponRpm').innerText = Math.round(weaponRpm).toLocaleString('pt-BR');
+      document.getElementById('resWeaponOmega').innerText = Math.round(omegaWeapon).toLocaleString('pt-BR');
+      document.getElementById('resWeaponPasses').innerText = Math.round(passesPerSec);
+
+      updateWeaponDiagnostic(biteMaxMm);
+      if (weaponRpm === 0) {
+        document.getElementById('resBiteMax').innerText = '—';
+        document.getElementById('resBiteAvg').innerText = '—';
+        document.getElementById('biteDiagTitle').innerText = 'Arma parada';
+        document.getElementById('biteDiagText').innerText = 'Sem rotação, o modelo de passagem de dentes não define uma mordida.';
+        document.getElementById('biteDiagAction').innerText = 'Informe uma rotação positiva para calcular o bite.';
+      }
+    }
+
+    // DIAGNÓSTICO DO BITE CONFORME A CATEGORIA ATIVA
+    function updateWeaponDiagnostic(bite) {
+      const box = document.getElementById('biteDiagBox');
+      const icon = document.getElementById('biteDiagIcon');
+      const title = document.getElementById('biteDiagTitle');
+      const text = document.getElementById('biteDiagText');
+      const action = document.getElementById('biteDiagAction');
+      const card = document.getElementById('cardWeaponBite');
+      const badge = document.getElementById('badgeWeaponBite');
+
+      const catInfo = ROBOT_CATEGORIES[currentCategory] || ROBOT_CATEGORIES.ant;
+      const [bMin, bMax] = catInfo.biteRange;
+
+      if (bite < bMin) {
+        card.className = 'bg-gradient-to-br from-[#1a1c12] to-[#111827] border-2 border-amber-500 rounded-xl p-4 shadow-lg shadow-amber-950/20 transition-all duration-300';
+        badge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800/60';
+        document.getElementById('resBiteAvg').className = 'font-bold text-amber-400';
+
+        box.className = 'p-4 rounded-xl border flex items-start gap-3 bg-amber-950/20 border-amber-800/60 transition-all duration-300';
+        icon.className = 'text-amber-400 font-bold text-xl leading-none mt-0.5';
+        icon.innerText = '⚠';
+        title.className = 'text-xs font-bold text-amber-300 uppercase tracking-wide';
+        title.innerText = `Abaixo da referência (Bite < ${bMin.toFixed(1)} mm)`;
+        text.innerText = `Mordida rasa para ${catInfo.name}. O dente tende a lixar ou ricochetear na blindagem sem transferir o momento de impacto.`;
+        action.className = 'text-xs font-medium text-amber-300 pt-1 border-t border-amber-900/40 mt-1';
+        action.innerHTML = '👉 <strong>O que fazer para corrigir:</strong> Reduza o RPM da arma (aplique redução por polias ou motor com menor KV), use 1 dente, ou aumente a velocidade de avanço da locomoção.';
+      } else if (bite <= bMax) {
+        card.className = 'bg-gradient-to-br from-[#121c2d] to-[#111827] border-2 border-emerald-500 rounded-xl p-4 shadow-lg shadow-emerald-950/20 transition-all duration-300';
+        badge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/60';
+        document.getElementById('resBiteAvg').className = 'font-bold text-emerald-400';
+
+        box.className = 'p-4 rounded-xl border flex items-start gap-3 bg-emerald-950/20 border-emerald-800/60 transition-all duration-300';
+        icon.className = 'text-emerald-400 font-bold text-xl leading-none mt-0.5';
+        icon.innerText = '✓';
+        title.className = 'text-xs font-bold text-emerald-300 uppercase tracking-wide';
+        title.innerText = `Bite na faixa de referência (${bMin.toFixed(1)} a ${bMax.toFixed(1)} mm)`;
+        text.innerText = `Estimativa dentro da referência adotada para ${catInfo.name}.`;
+        action.className = 'text-xs font-medium text-emerald-300 pt-1 border-t border-emerald-900/40 mt-1';
+        action.innerHTML = '👉 <strong>Tudo pronto:</strong> Compare a mordida com o relevo efetivo do dente; a profundidade real depende da geometria.';
+      } else {
+        card.className = 'bg-gradient-to-br from-[#261214] to-[#111827] border-2 border-rose-500 rounded-xl p-4 shadow-lg shadow-rose-950/20 transition-all duration-300';
+        badge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-800/60';
+        document.getElementById('resBiteAvg').className = 'font-bold text-rose-400';
+
+        box.className = 'p-4 rounded-xl border flex items-start gap-3 bg-rose-950/20 border-rose-800/60 transition-all duration-300';
+        icon.className = 'text-rose-400 font-bold text-xl leading-none mt-0.5';
+        icon.innerText = '⚡';
+        title.className = 'text-xs font-bold text-rose-300 uppercase tracking-wide';
+        title.innerText = `Acima da referência (> ${bMax.toFixed(1)} mm)`;
+        text.innerText = 'O avanço entre passagens supera a referência adotada. Compare o resultado com o relevo efetivo do dente e a geometria de contato.';
+        action.className = 'text-xs font-medium text-rose-300 pt-1 border-t border-rose-900/40 mt-1';
+        action.innerHTML = '👉 <strong>O que fazer para corrigir:</strong> Aumente o RPM da arma (aumente o KV, use bateria com mais células ou diminua as polias) ou diminua a velocidade de aproximação.';
+      }
+    }
+
+    function toggleAccordion(contentId, iconId) {
+      const content = document.getElementById(contentId);
+      const icon = document.getElementById(iconId);
+      icon.parentElement.setAttribute('aria-expanded', String(content.classList.contains('hidden')));
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.innerText = '▲';
+      } else {
+        content.classList.add('hidden');
+        icon.innerText = '▼';
+      }
+    }
+
+    // CARREGAR PRESET DO ROBÔ (KILLBOT / BLITZEN)
+    function loadRobotPreset(robotKey) {
+      const p = ROBOT_PRESETS[robotKey];
+      if (!p) return;
+      resetDefaults();
+      isLoadingPreset = true;
+      activePreset = robotKey;
+
+      // Destaca botão de preset ativo
+      document.getElementById('presetBtnKillbot').className = robotKey === 'killbot' 
+        ? 'px-3 py-1 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow' 
+        : 'px-3 py-1 text-xs font-bold rounded-md transition-all text-slate-300 hover:text-white hover:bg-[#201D1B]';
+      document.getElementById('presetBtnBlitzen').className = robotKey === 'blitzen' 
+        ? 'px-3 py-1 text-xs font-bold rounded-md transition-all bg-[#D62A22] text-white shadow' 
+        : 'px-3 py-1 text-xs font-bold rounded-md transition-all text-slate-300 hover:text-white hover:bg-[#201D1B]';
+      document.getElementById('presetBtnCustom').className = 'px-2 py-1 text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#201D1B] rounded-md';
+
+      // Atualiza Categoria nos botões
+      if (p.category) {
+        selectCategory(p.category, false);
+      }
+
+      // Configura Locomoção
+      setDriveType(p.loco.type);
+      setLocoMotorType(p.loco.motorType);
+
+      if (p.loco.motorType === 'brushed') {
+        document.getElementById('locoBrushedRpm').value = p.loco.brushedRpm;
+        document.getElementById('locoBrushedModelDisplay').innerText = `(${p.loco.motorModel})`;
+        document.getElementById('locoMotorModelDisplay').innerText = '';
+      } else {
+        document.getElementById('locoKv').value = p.loco.kv;
+        setLocoCells(p.loco.cells);
+        document.getElementById('locoMotorModelDisplay').innerText = `(${p.loco.motorModel})`;
+        document.getElementById('locoBrushedModelDisplay').innerText = '';
+      }
+
+      document.getElementById('shaftDiameter').value = p.loco.shaftDiam;
+      document.getElementById('wheelDiameter').value = p.loco.wheelDiam;
+      document.getElementById('gearRatio').value = p.loco.gearRatio;
+      document.getElementById('gearRatioDisplay').innerText = `${p.loco.gearRatio.toFixed(2)} : 1`;
+      document.getElementById('locoEff').value = p.loco.eff;
+      updateLocoEff(p.loco.eff);
+
+      // Dinâmica de Tração do Preset com verificações seguras
+      const dtTypeEl = document.getElementById('driveDrivetrainType');
+      if (dtTypeEl) dtTypeEl.value = p.loco.drivetrain || '2wd';
+
+      const numMotorsEl = document.getElementById('driveNumMotors');
+      if (numMotorsEl) numMotorsEl.value = p.loco.numMotors || 2;
+
+      const frictMuEl = document.getElementById('driveFrictionMu');
+      if (frictMuEl) frictMuEl.value = p.loco.tireMu ?? 0.85;
+
+      const weightDistEl = document.getElementById('driveWeightDist');
+      if (weightDistEl) weightDistEl.value = p.loco.weightDist || 65;
+
+      const weightDistDisp = document.getElementById('driveWeightDistDisplay');
+      if (weightDistDisp) weightDistDisp.innerText = `${p.loco.weightDist || 65}%`;
+
+      const peakCurrentEl = document.getElementById('driveMotorPeakCurrent');
+      if (peakCurrentEl) peakCurrentEl.value = p.loco.peakCurrent || 1.5;
+
+      if (reductionCalculatorActive) {
+        toggleReductionCalculator();
+      }
+
+      // Configura Arma
+      setWeaponMotorType(p.weapon.motorType || 'brushless');
+      setWeaponTeeth(p.weapon.teeth);
+      if (p.weapon.motorType === 'brushed') {
+        document.getElementById('weaponBrushedRpm').value = p.weapon.brushedRpm || 18000;
+        document.getElementById('weaponBrushedModelDisplay').innerText = p.weapon.motorModel ? `(${p.weapon.motorModel})` : '';
+        document.getElementById('weaponMotorModelDisplay').innerText = '';
+      } else {
+        document.getElementById('weaponCellSelect').value = p.weapon.cells;
+        document.getElementById('weaponMotorKv').value = p.weapon.motorKv;
+        document.getElementById('weaponMotorModelDisplay').innerText = p.weapon.motorModel ? `(${p.weapon.motorModel})` : '';
+        document.getElementById('weaponBrushedModelDisplay').innerText = '';
+      }
+      document.getElementById('pulleyMotor').value = p.weapon.pulleyMotor;
+      document.getElementById('pulleyWeapon').value = p.weapon.pulleyWeapon;
+      document.getElementById('weaponDiameter').value = p.weapon.diameter;
+      document.getElementById('weaponIzz').value = p.weapon.izz;
+
+      calculateLocomotion();
+      syncSpeedFromLocomotion();
+
+      isLoadingPreset = false;
+    }
+
+    // RESETAR PARA MODO CUSTOMIZADO
+    function resetDefaults() {
+      isLoadingPreset = true;
+      initialInputs.forEach(([id,value]) => document.getElementById(id).value = value);
+      reductionCalculatorActive = false;
+      document.getElementById('calcReductionWrapper').classList.add('hidden');
+      document.getElementById('manualGearRatioWrapper').classList.remove('hidden');
+      document.getElementById('btnToggleReductionCalc').innerText = '⚙️ Calcular Redução';
+      selectCategory('ant');
+      setDriveType('reducao'); setLocoMotorType('brushed'); setLocoCells(2);
+      setWeaponMotorType('brushless'); setWeaponTeeth(1);
+      updateLocoEff(85); updateDriveWeightDist(65); updateManualGearRatio();
+      isLoadingPreset = false;
+      activePreset = 'reset'; markAsCustom();
+      calculateLocomotion(); syncSpeedFromLocomotion();
+    }
+
+    // INICIALIZAÇÃO
+    window.onload = function() {
+      document.querySelectorAll('input[type="number"]').forEach(el => {
+        if (!el.hasAttribute('min')) el.min = '0';
+        if (!el.hasAttribute('step')) el.step = 'any';
+      });
+      ['wheelDiameter','shaftDiameter','gearRatio','robotMass','pulleyMotor','pulleyWeapon','weaponDiameter','redPinionTeeth','redWheelTeeth','redMotorDiam','redWheelDiam'].forEach(id => document.getElementById(id).min = '0.000001');
+      ['driveNumMotors','pulleyMotor','pulleyWeapon','redPinionTeeth','redWheelTeeth'].forEach(id => document.getElementById(id).step = '1');
+      document.getElementById('driveNumMotors').max = '8';
+      // Associate legacy labels without changing the original markup structure.
+      document.querySelectorAll('label:not([for])').forEach(label => {
+        const control = label.parentElement.querySelector('input,select') || label.parentElement.parentElement.querySelector('input,select');
+        if (control && control.id) label.htmlFor = control.id;
+      });
+      initialInputs = Array.from(document.querySelectorAll('input[id],select[id]'), el => [el.id,el.value]);
+      loadRobotPreset('killbot');
+      document.querySelectorAll('[role="tab"]').forEach(tab => tab.addEventListener('keydown', e => {
+        if (['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) {
+          e.preventDefault();
+          const target = e.key === 'Home' ? 'locomocao' : e.key === 'End' ? 'arma' : tab.id === 'tabBtnArma' ? 'locomocao' : 'arma';
+          switchMainTab(target); document.getElementById(target === 'arma' ? 'tabBtnArma' : 'tabBtnLocomocao').focus();
+        }
+      }));
+    };
+  </script>
+</body>
+</html>

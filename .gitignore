@@ -1,0 +1,43 @@
+# Instruções locais de publicação
+/pages.txt
+
+# Editores e IDEs
+.vscode/
+.idea/
+*.code-workspace
+*.sublime-workspace
+
+# Dependências e caches locais
+node_modules/
+.npm/
+.cache/
+.parcel-cache/
+.vite/
+coverage/
+__pycache__/
+*.py[cod]
+
+# Ambiente local (modelo documentado pode ser versionado)
+.env
+.env.*
+!.env.example
+
+# Logs, temporários e backups
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# Metadados do sistema operacional
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# Arquivos de distribuição gerados localmente
+/UERJBotz-Combat-Lab-*.zip
+
+# Não ignorar index.html, assets/, README.md, .gitignore ou .nojekyll.
